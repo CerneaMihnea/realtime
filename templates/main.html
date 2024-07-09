@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Controller Information</title>
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/runtime');
+                const data = await response.json();
+                document.getElementById('mac').textContent = data.mac;
+                document.getElementById('sw').textContent = data.sw;
+                document.getElementById('vin').textContent = `${data.vin/100} V` ;
+                document.getElementById('tem').textContent = `${data.tem/100} °C`;
+                document.getElementById('ds1').textContent = `${data.ds1/10} °C`;
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+
+        async function fetchData_E7_2017() {
+            try {
+                const response = await fetch('/runtime_E7');
+                const data = await response.json();
+                document.getElementById('AI0').textContent = data.AI0;
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+            }
+        }
+
+        window.onload = () => {
+            fetchData();
+            fetchData_E7_2017();
+            setInterval(fetchData, 1000);
+            setInterval(fetchData_E7_2017, 1000); 
+        };
+    </script>
+</head>
+<body>
+    <h1>Controllers Information</h1>
+    <h3>LK3 Controller</h3>
+    <table>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Controller ID</td><td id="mac">Loading...</td></tr>
+        <tr><td>Software Version</td><td id="sw">Loading...</td></tr>
+        <tr><td>VIN</td><td id="vin">Loading...</td></tr>
+        <tr><td>Internal temperature</td><td id="tem">Loading...</td></tr>
+        <tr><td>Temperature(sensor)</td><td id="ds1">Loading...</td></tr>
+    </table>
+    <form action="/toggle" method="post">
+        <button type="submit">{{button_text}}</button>
+    </form>
+    <h3>E7 2017 Controller</h3>
+    <table>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr><td>Port AI0</td><td id="AI0">Loading...</td></tr>
+    </table>
+    <br>
+    
+    <form action="{{ url_for('logout') }}" method="post">
+        <button type="submit" class="btn btn-primary">Log out</button>
+    </form>
+</body>
+</html>
